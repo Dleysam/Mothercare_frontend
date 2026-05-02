@@ -121,7 +121,7 @@
         const WEATHER_API_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
         const CITY = "Warri,NG";
 
-        // "Shadow" variables to hold pure numbers for the model
+        // Global variables to store PURE numbers for the model
         let modelTemp = 28.5;
         let modelHumid = 65;
         let modelPrecip = 0.0;
@@ -159,12 +159,12 @@
                 const data = await res.json();
                 const hourlyData = data.days[0].hours[h];
 
-                // Store pure numbers for prediction
+                // STORE PURE NUMBERS FOR THE MODEL
                 modelTemp = hourlyData.temp;
                 modelHumid = Math.round(hourlyData.humidity);
                 modelPrecip = hourlyData.precip || 0;
 
-                // Update UI with labels for the user
+                // DISPLAY WITH SYMBOLS FOR THE USER
                 document.getElementById('temp').value = modelTemp + "°C";
                 document.getElementById('humidity').value = modelHumid + "%";
                 document.getElementById('precip').value = modelPrecip + "mm";
@@ -193,7 +193,7 @@
             btn.disabled = true;
             btn.innerText = "Analyzing...";
 
-            // Sending PURE numbers to the model
+            // Payload only contains clean integers and floats
             const payload = {
                 category: parseInt(document.getElementById('category').value),
                 weather: parseInt(document.getElementById('weather').value),
@@ -219,7 +219,7 @@
                 resBox.classList.remove('hidden');
 
                 const p = Number(data.prediction);
-                if (isNaN(p)) { throw new Error("NaN Output"); }
+                if (isNaN(p)) throw new Error("NaN Output");
 
                 let label, color, action;
                 if (p <= 1) {
