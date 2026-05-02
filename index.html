@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GABBS Mothercare AI | Advanced Demand Forecast</title>
+    <title>GABBS Mothercare AI | Enterprise Forecast</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .glass-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .toggle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toggle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .toggle-active { background-color: #3b82f6 !important; color: white !important; border-color: #60a5fa !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen p-4 flex items-center justify-center font-sans">
@@ -65,19 +66,23 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-blue-500 uppercase mb-2 ml-1 text-center">Hour</label>
-                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-2xl p-3 text-center font-bold text-blue-400">
+                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-2xl p-3 text-center font-bold text-blue-400 outline-none">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div class="flex bg-slate-900/50 rounded-2xl border border-slate-800 p-3 items-center justify-around">
-                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Temp</span><p id="t_val" class="text-lg font-black">--</p></div>
-                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Humid</span><p id="h_val" class="text-lg font-black">--</p></div>
-                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Precip</span><p id="p_val" class="text-lg font-black">--</p></div>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-3 flex items-center justify-around">
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Temp</span><p id="t_val" class="text-sm font-black">--</p></div>
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Humid</span><p id="h_val" class="text-sm font-black">--</p></div>
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Precip</span><p id="p_val" class="text-sm font-black">--</p></div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-center text-xs font-bold" placeholder="Day">
-                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-center text-xs font-bold" placeholder="Mo">
+                <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-2 text-center">
+                    <span class="text-[8px] text-slate-500 uppercase font-black">Date</span>
+                    <input type="number" id="day" class="w-full bg-transparent text-center text-sm font-bold outline-none" placeholder="DD">
+                </div>
+                <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-2 text-center">
+                    <span class="text-[8px] text-slate-500 uppercase font-black">Month</span>
+                    <input type="number" id="month" class="w-full bg-transparent text-center text-sm font-bold outline-none" placeholder="MM">
                 </div>
             </div>
 
@@ -100,11 +105,9 @@
         const WEATHER_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
         let metrics = { temp: 28, humidity: 65, precip: 0, conditions: "clear" };
 
-        // Toggle Logic
         function setToggle(inputId, value, btn) {
             document.getElementById(inputId).value = value;
-            const parent = btn.parentElement;
-            parent.querySelectorAll('button').forEach(b => b.classList.remove('toggle-active'));
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('toggle-active'));
             btn.classList.add('toggle-active');
         }
 
@@ -151,12 +154,12 @@
         document.getElementById('predictForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "Analysing...";
+            btn.disabled = true; btn.innerText = "Analysing Model...";
 
             const payload = {
                 category: document.getElementById('category').value,
                 weather: metrics.conditions,
-                day_final: parseInt(document.getElementById('day_final').value),
+                day_final: 1,
                 day: parseInt(document.getElementById('day').value),
                 month: parseInt(document.getElementById('month').value),
                 payday_bin: parseInt(document.getElementById('payday_bin').value),
