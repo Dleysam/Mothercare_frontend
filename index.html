@@ -158,6 +158,35 @@
                 btn.innerHTML = 'Run Inference';
             }
         };
+        // This function determines the description based on the number
+function getFeedback(volume) {
+    if (volume <= 1) {
+        return {
+            label: "Low Demand",
+            color: "#10b981", // Green
+            action: "Good time for inventory checks and shelf tidying."
+        };
+    } else if (volume <= 3) {
+        return {
+            label: "Moderate Demand",
+            color: "#f59e0b", // Amber
+            action: "Expect steady customers. Keep the nursing section organized."
+        };
+    } else {
+        return {
+            label: "High Demand / Rush!",
+            color: "#ef4444", // Red
+            action: "Peak period! Ensure all hands are on deck for quick service."
+        };
+    }
+}
+
+// Inside your .then(data => { ... }) block:
+const feedback = getFeedback(data.prediction);
+resultValue.innerText = data.prediction; // Keeps the number
+statusLabel.innerText = feedback.label;   // Adds "Rush" or "Quiet"
+statusLabel.style.color = feedback.color;
+suggestionText.innerText = feedback.action; // Adds the "What to do"
     </script>
 </body>
               </html>
