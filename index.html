@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2 ml-1">Weather (Hourly Sync)</label>
-                    <select id="weather" class="w-full bg-slate-900/50 border border-blue-500/30 rounded-xl p-3 outline-none text-sm pointer-events-none">
+                    <select id="weather" class="w-full bg-slate-900/50 border border-blue-500/30 rounded-xl p-3 outline-none text-sm pointer-events-none opacity-60">
                         <option value="0">Clear</option>
                         <option value="1">Clear/Sunny</option>
                         <option value="2">Cloudy</option>
@@ -50,150 +50,85 @@
             </div>
 
             <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Date</label>
-                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Month</label>
-                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2">Hour (0-23)</label>
-                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-xl p-3 text-center text-sm font-bold">
-                </div>
+                <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-xl p-3 text-center text-sm font-bold text-blue-400">
+            </div>
+
+            <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 grid grid-cols-3 gap-4 text-center">
+                <div><span class="block text-[10px] text-slate-500 uppercase mb-1">Temp</span><p id="ui_temp" class="text-xl font-bold">--</p></div>
+                <div class="border-x border-slate-800"><span class="block text-[10px] text-slate-500 uppercase mb-1">Humid</span><p id="ui_humid" class="text-xl font-bold">--</p></div>
+                <div><span class="block text-[10px] text-slate-500 uppercase mb-1">Precip</span><p id="ui_precip" class="text-xl font-bold">--</p></div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Day of Week</label>
-                    <select id="day_final" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none">
-                        <option value="1">Monday</option>
-                        <option value="5">Tuesday</option>
-                        <option value="6">Wednesday</option>
-                        <option value="4">Thursday</option>
-                        <option value="0">Friday</option>
-                        <option value="2">Saturday</option>
-                        <option value="3">Sunday</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Is Payday?</label>
-                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
-                        <option value="0">No (0)</option>
-                        <option value="1">Yes (1)</option>
+                <select id="day_final" class="hidden"><option value="1"></option></select>
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Is Payday Week?</label>
+                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm font-bold">
+                        <option value="0">Regular Day (0)</option>
+                        <option value="1">Payday Active (1)</option>
                     </select>
                 </div>
             </div>
 
-            <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-3 tracking-widest">Atmospheric Data for selected Hour</p>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="text-center">
-                        <span class="block text-[10px] text-slate-500 mb-1">Temp</span>
-                        <input type="text" id="temp" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
-                    </div>
-                    <div class="text-center border-x border-slate-800">
-                        <span class="block text-[10px] text-slate-500 mb-1">Humidity</span>
-                        <input type="text" id="humidity" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-[10px] text-slate-500 mb-1">Precip</span>
-                        <input type="text" id="precip" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all uppercase tracking-widest text-xs">
                 Run Prediction
             </button>
         </form>
 
         <div id="resultBox" class="hidden mt-8 p-6 bg-slate-900 border border-slate-800 rounded-[1.5rem] text-center">
             <p id="statusLabel" class="text-[10px] font-bold uppercase tracking-widest mb-1"></p>
-            <h2 id="predictionValue" class="text-6xl font-black text-white">0</h2>
-            <p id="suggestionText" class="text-slate-300 text-xs mt-4 px-4 font-medium leading-relaxed"></p>
+            <h2 id="predictionValue" class="text-6xl font-black text-white">--</h2>
+            <p id="suggestionText" class="text-slate-300 text-xs mt-4"></p>
         </div>
     </div>
 
     <script>
         const API_URL = "https://dleysam-mothercare-predictor-api.hf.space/predict";
-        const WEATHER_API_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
+        const WEATHER_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
         const CITY = "Warri,NG";
 
-        // Global variables to store PURE numbers for the model
-        let modelTemp = 28.5;
-        let modelHumid = 65;
-        let modelPrecip = 0.0;
+        let weatherMetrics = { temp: 28, humidity: 60, precip: 0 };
+
+        async function fetchWeather() {
+            const d = document.getElementById('day').value.padStart(2, '0');
+            const m = document.getElementById('month').value.padStart(2, '0');
+            const h = parseInt(document.getElementById('start_hour').value);
+            const status = document.getElementById('sync-status');
+            
+            try {
+                const res = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/2026-${m}-${d}?unitGroup=metric&key=${WEATHER_KEY}&contentType=json`);
+                const data = await res.json();
+                const hour = data.days[0].hours[h];
+
+                weatherMetrics = { temp: hour.temp, humidity: Math.round(hour.humidity), precip: hour.precip || 0 };
+                document.getElementById('ui_temp').innerText = weatherMetrics.temp + "°";
+                document.getElementById('ui_humid').innerText = weatherMetrics.humidity + "%";
+                document.getElementById('ui_precip').innerText = weatherMetrics.precip + "mm";
+
+                const dayMap = { 0: 3, 1: 1, 2: 5, 3: 6, 4: 4, 5: 0, 6: 2 };
+                document.getElementById('day_final').value = dayMap[new Date(2026, m-1, d).getDay()];
+                status.innerText = "✅ Forecast Synced";
+            } catch (e) { status.innerText = "⚠️ Weather Sync Failed"; }
+        }
 
         window.onload = () => {
             const now = new Date();
             document.getElementById('day').value = now.getDate();
             document.getElementById('month').value = now.getMonth() + 1;
             document.getElementById('start_hour').value = now.getHours();
-            updateDayCode();
-            fetchHourlyWeather();
+            fetchWeather();
         };
 
-        function updateDayCode() {
-            const d = parseInt(document.getElementById('day').value);
-            const m = parseInt(document.getElementById('month').value) - 1;
-            const y = new Date().getFullYear();
-            const dateObj = new Date(y, m, d);
-            const dayMap = { 0: 3, 1: 1, 2: 5, 3: 6, 4: 4, 5: 0, 6: 2 };
-            document.getElementById('day_final').value = dayMap[dateObj.getDay()];
-        }
-
-        async function fetchHourlyWeather() {
-            const d = document.getElementById('day').value.padStart(2, '0');
-            const m = document.getElementById('month').value.padStart(2, '0');
-            const h = parseInt(document.getElementById('start_hour').value);
-            const y = new Date().getFullYear();
-            const status = document.getElementById('sync-status');
-            
-            status.innerText = "🔄 Syncing Hourly Data...";
-            const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/${y}-${m}-${d}?unitGroup=metric&key=${WEATHER_API_KEY}&contentType=json`;
-
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                const hourlyData = data.days[0].hours[h];
-
-                // STORE PURE NUMBERS FOR THE MODEL
-                modelTemp = hourlyData.temp;
-                modelHumid = Math.round(hourlyData.humidity);
-                modelPrecip = hourlyData.precip || 0;
-
-                // DISPLAY WITH SYMBOLS FOR THE USER
-                document.getElementById('temp').value = modelTemp + "°C";
-                document.getElementById('humidity').value = modelHumid + "%";
-                document.getElementById('precip').value = modelPrecip + "mm";
-
-                const cond = hourlyData.conditions.toLowerCase();
-                let code = 4; // Default to Normal
-                if (cond.includes('partially cloudy')) code = 2;
-                else if (cond.includes('overcast')) code = 5;
-                else if (cond.includes('rain')) code = 8;
-                else if (cond.includes('clear')) code = 1;
-                
-                document.getElementById('weather').value = code;
-                status.innerText = `✅ Forecast for ${h}:00 synced`;
-            } catch (e) { 
-                status.innerText = "❌ Sync Failed";
-            }
-        }
-
-        document.getElementById('day').addEventListener('input', () => { updateDayCode(); fetchHourlyWeather(); });
-        document.getElementById('month').addEventListener('input', () => { updateDayCode(); fetchHourlyWeather(); });
-        document.getElementById('start_hour').addEventListener('input', fetchHourlyWeather);
+        document.getElementById('day').onchange = fetchWeather;
+        document.getElementById('start_hour').onchange = fetchWeather;
 
         document.getElementById('predictForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "Analyzing...";
+            btn.disabled = true; btn.innerText = "Contacting AI...";
 
-            // Payload only contains clean integers and floats
             const payload = {
                 category: parseInt(document.getElementById('category').value),
                 weather: parseInt(document.getElementById('weather').value),
@@ -203,40 +138,35 @@
                 payday_bin: parseInt(document.getElementById('payday_bin').value),
                 start_hour: parseInt(document.getElementById('start_hour').value),
                 shelf_status: 3,
-                temp: modelTemp,
-                humidity: modelHumid,
-                precip: modelPrecip
+                temp: weatherMetrics.temp,
+                humidity: weatherMetrics.humidity,
+                precip: weatherMetrics.precip
             };
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
                 const data = await response.json();
-                const resBox = document.getElementById('resultBox');
-                resBox.classList.remove('hidden');
-
-                const p = Number(data.prediction);
-                if (isNaN(p)) throw new Error("NaN Output");
-
-                let label, color, action;
-                if (p <= 1) {
-                    label = "Low Demand"; color = "#10b981"; action = "🟢 Quiet Period. Good for inventory counts.";
-                } else if (p <= 3) {
-                    label = "Moderate Traffic"; color = "#f59e0b"; action = "🟡 Steady flow. Normal floor presence needed.";
-                } else {
-                    label = "High Demand / RUSH"; color = "#ef4444"; action = "🔴 Peak period! Prioritize checkout speed.";
-                }
-
+                const p = Math.round(data.prediction);
+                
+                document.getElementById('resultBox').classList.remove('hidden');
                 document.getElementById('predictionValue').innerText = p;
-                document.getElementById('statusLabel').innerText = label;
-                document.getElementById('statusLabel').style.color = color;
-                document.getElementById('suggestionText').innerText = action;
-                resBox.scrollIntoView({ behavior: 'smooth' });
-            } catch (err) { alert("API Error: Model failed to process."); }
-            finally { btn.disabled = false; btn.innerText = "Run Prediction"; }
+                document.getElementById('statusLabel').innerText = p > 3 ? "HIGH DEMAND" : "STABLE";
+                document.getElementById('statusLabel').style.color = p > 3 ? "#ef4444" : "#10b981";
+                document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                console.error("Prediction Error:", err);
+                alert(`API Error: ${err.message}. Please ensure your Hugging Face Space is 'Running'.`);
+            } finally {
+                btn.disabled = false; btn.innerText = "Run Prediction";
+            }
         };
     </script>
 </body>
