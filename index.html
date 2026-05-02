@@ -38,12 +38,17 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Weather</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Weather (Auto-synced)</label>
                     <select id="weather" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none text-sm">
-                        <option value="clear">Clear</option>
-                        <option value="cloudy">Cloudy</option>
-                        <option value="rainy">Rainy</option>
-                        <option value="overcast">Overcast</option>
+                        <option value="0">Clear</option>
+                        <option value="1">Clear/Sunny</option>
+                        <option value="2">Cloudy</option>
+                        <option value="3">Light Rain (Slow)</option>
+                        <option value="4">Normal/Cool</option>
+                        <option value="5">Overcast</option>
+                        <option value="6">Rain</option>
+                        <option value="8">Rainy</option>
+                        <option value="9">Rainy/Cloudy</option>
                     </select>
                 </div>
             </div>
@@ -59,16 +64,24 @@
 
             <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Day (0-6)</label>
-                    <input type="number" id="day_final" value="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Day (Model Code)</label>
+                    <select id="day_final" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none">
+                        <option value="1">Monday</option>
+                        <option value="5">Tuesday</option>
+                        <option value="6">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="0">Friday</option>
+                        <option value="2">Saturday</option>
+                        <option value="3">Sunday</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Date (1-31)</label>
-                    <input type="number" id="day" value="29" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Month (1-12)</label>
-                    <input type="number" id="month" value="5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
                 </div>
             </div>
 
@@ -82,24 +95,24 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Hour (0-23)</label>
-                    <input type="number" id="start_hour" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    <input type="number" id="start_hour" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
                 </div>
             </div>
 
             <details class="group">
-                <summary class="text-[10px] font-bold uppercase text-slate-600 cursor-pointer hover:text-slate-400 transition ml-1">Environmental Data</summary>
+                <summary class="text-[10px] font-bold uppercase text-slate-600 cursor-pointer hover:text-slate-400 transition ml-1">Environmental Data (Auto-filled)</summary>
                 <div class="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-slate-800">
                     <div>
                         <label class="block text-[9px] text-slate-500 mb-1">Temp °C</label>
-                        <input type="number" step="0.1" id="temp" value="28.5" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
+                        <input type="number" step="0.1" id="temp" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
                     </div>
                     <div>
                         <label class="block text-[9px] text-slate-500 mb-1">Humidity %</label>
-                        <input type="number" id="humidity" value="65" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
+                        <input type="number" id="humidity" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
                     </div>
                     <div>
                         <label class="block text-[9px] text-slate-500 mb-1">Precip mm</label>
-                        <input type="number" step="0.1" id="precip" value="0.0" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
+                        <input type="number" step="0.1" id="precip" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-center text-xs">
                     </div>
                 </div>
             </details>
@@ -120,27 +133,65 @@
     <script>
         const form = document.getElementById('predictForm');
         const API_URL = "https://dleysam-mothercare-predictor-api.hf.space/predict";
+        const WEATHER_API_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
+        const CITY = "Warri,NG";
 
-        // Logic to translate numbers into readable advice
-        function getFeedback(volume) {
-            if (volume <= 1) {
-                return {
-                    label: "Low Demand Expected",
-                    color: "#10b981", // Green
-                    action: "🟢 Good time for inventory checks, shelf tidying, and organizing the warehouse."
-                };
-            } else if (volume <= 3) {
-                return {
-                    label: "Moderate Traffic",
-                    color: "#f59e0b", // Amber
-                    action: "🟡 Expect steady customers. Ensure nursing mother assistants are visible on the floor."
-                };
+        window.onload = async () => {
+            const now = new Date();
+            const jsDay = now.getDay(); 
+            const dayMap = { 0: 3, 1: 1, 2: 5, 3: 6, 4: 4, 5: 0, 6: 2 };
+
+            document.getElementById('day_final').value = dayMap[jsDay];
+            document.getElementById('day').value = now.getDate();
+            document.getElementById('month').value = now.getMonth() + 1;
+            document.getElementById('start_hour').value = now.getHours();
+
+            await fetchAutoWeather();
+        };
+
+        async function fetchAutoWeather() {
+            const day = document.getElementById('day').value.padStart(2, '0');
+            const month = document.getElementById('month').value.padStart(2, '0');
+            const year = new Date().getFullYear();
+            const selectedDate = `${year}-${month}-${day}`;
+
+            const weatherUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/${selectedDate}?unitGroup=metric&key=${WEATHER_API_KEY}&contentType=json`;
+
+            try {
+                const res = await fetch(weatherUrl);
+                const data = await res.json();
+                const forecast = data.days[0];
+
+                document.getElementById('temp').value = forecast.temp;
+                document.getElementById('humidity').value = forecast.humidity;
+                document.getElementById('precip').value = forecast.precip || 0.0;
+
+                const cond = forecast.conditions.toLowerCase();
+                let code = 0; 
+
+                if (cond.includes('partially cloudy')) code = 2;
+                else if (cond.includes('overcast')) code = 5;
+                else if (cond.includes('rain') && forecast.precip < 2) code = 3;
+                else if (cond.includes('rain')) code = 8;
+                else if (cond.includes('clear')) code = 0;
+                
+                document.getElementById('weather').value = code;
+            } catch (e) {
+                console.error("Weather auto-fill failed.");
+            }
+        }
+
+        // Auto-update weather data if user changes the date
+        document.getElementById('day').onchange = fetchAutoWeather;
+        document.getElementById('month').onchange = fetchAutoWeather;
+
+        function getFeedback(prediction) {
+            if (prediction === 0) {
+                return { val: "1", label: "Low Demand", color: "#10b981", action: "🟢 Quiet period. Perfect for restocking and organizing the mothercare floor." };
+            } else if (prediction === 1) {
+                return { val: "3", label: "Moderate Traffic", color: "#f59e0b", action: "🟡 Expect steady customers. Keep nursing mother assistants ready." };
             } else {
-                return {
-                    label: "High Demand / RUSH",
-                    color: "#ef4444", // Red
-                    action: "🔴 Peak period predicted! Prioritize checkout speed and keep aisle traffic clear."
-                };
+                return { val: "5", label: "High Demand / RUSH", color: "#ef4444", action: "🔴 Peak period! Speed up checkouts and clear the aisles." };
             }
         }
 
@@ -154,7 +205,7 @@
             
             const payload = {
                 category: document.getElementById('category').value,
-                weather: document.getElementById('weather').value,
+                weather: parseInt(document.getElementById('weather').value),
                 day_final: parseInt(document.getElementById('day_final').value),
                 day: parseInt(document.getElementById('day').value),
                 month: parseInt(document.getElementById('month').value),
@@ -172,25 +223,17 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
                 });
-                
                 const data = await response.json();
-                
-                // Apply the feedback logic
                 const feedback = getFeedback(data.prediction);
                 
                 resBox.classList.remove('hidden');
-                document.getElementById('predictionValue').innerText = data.prediction;
-                
-                const label = document.getElementById('statusLabel');
-                label.innerText = feedback.label;
-                label.style.color = feedback.color;
-                
+                document.getElementById('predictionValue').innerText = feedback.val;
+                document.getElementById('statusLabel').innerText = feedback.label;
+                document.getElementById('statusLabel').style.color = feedback.color;
                 document.getElementById('suggestionText').innerText = feedback.action;
-                
                 resBox.scrollIntoView({ behavior: 'smooth' });
-
             } catch (error) {
-                alert("Connection Error: Make sure your Hugging Face Space is 'Running'.");
+                alert("Hugging Face API Error. Check your Space status.");
             } finally {
                 btn.innerHTML = 'Run Inference';
                 btn.disabled = false;
@@ -199,3 +242,4 @@
     </script>
 </body>
 </html>
+
