@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GABBS Mothercare AI | Real-Time Demand Forecast</title>
+    <title>GABBS Mothercare AI | Real Time Demand Forecast</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -20,7 +20,7 @@
                 <img src="https://raw.githubusercontent.com/dleysam/mothercare_frontend/main/gabbs.png" alt="GABBS" class="h-10 object-contain">
             </div>
             <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Mothercare Predictor</h1>
-            <p id="sync-status" class="text-slate-500 text-[9px] uppercase tracking-widest font-bold mt-1">Live Weather: Warri, NG</p>
+            <p id="sync-status" class="text-slate-500 text-[9px] uppercase tracking-widest font-bold mt-1">Ready for Sync</p>
         </div>
 
         <form id="predictForm" class="space-y-5">
@@ -89,22 +89,26 @@
             </div>
 
             <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-3 tracking-widest">Atmospheric Data for selected Hour</p>
+                <p class="text-[9px] font-bold text-slate-500 uppercase mb-3 tracking-widest text-center">Hourly Atmosphere Data</p>
                 <div class="grid grid-cols-3 gap-4">
                     <div class="text-center">
                         <span class="block text-[10px] text-slate-500 mb-1">Temp</span>
-                        <input type="text" id="temp" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
+                        <div id="temp_display" class="text-xl font-bold text-white">--</div>
                     </div>
                     <div class="text-center border-x border-slate-800">
                         <span class="block text-[10px] text-slate-500 mb-1">Humidity</span>
-                        <input type="text" id="humidity" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
+                        <div id="humidity_display" class="text-xl font-bold text-white">--</div>
                     </div>
                     <div class="text-center">
                         <span class="block text-[10px] text-slate-500 mb-1">Precip</span>
-                        <input type="text" id="precip" readonly class="w-full bg-transparent text-xl font-bold text-white text-center outline-none">
+                        <div id="precip_display" class="text-xl font-bold text-white">--</div>
                     </div>
                 </div>
             </div>
+
+            <input type="hidden" id="raw_temp" value="28.0">
+            <input type="hidden" id="raw_humidity" value="70">
+            <input type="hidden" id="raw_precip" value="0.0">
 
             <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">
                 Run Prediction
@@ -113,7 +117,7 @@
 
         <div id="resultBox" class="hidden mt-8 p-6 bg-slate-900 border border-slate-800 rounded-[1.5rem] text-center">
             <p id="statusLabel" class="text-[10px] font-bold uppercase tracking-widest mb-1"></p>
-            <h2 id="predictionValue" class="text-6xl font-black text-white">0</h2>
+            <h2 id="predictionValue" class="text-6xl font-black text-white">--</h2>
             <p id="suggestionText" class="text-slate-300 text-xs mt-4 px-4 font-medium leading-relaxed"></p>
         </div>
     </div>
@@ -148,7 +152,7 @@
             const y = new Date().getFullYear();
             const status = document.getElementById('sync-status');
             
-            status.innerText = "🔄 Syncing Hourly Data...";
+            status.innerText = "🔄 SYNCING...";
             const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/${y}-${m}-${d}?unitGroup=metric&key=${WEATHER_API_KEY}&contentType=json`;
 
             try {
@@ -156,15 +160,20 @@
                 const data = await res.json();
                 const hourlyData = data.days[0].hours[h];
 
-                document.getElementById('temp').value = hourlyData.temp + "°C";
-                document.getElementById('humidity').value = hourlyData.humidity + "%";
-                document.getElementById('precip').value = (hourlyData.precip || 0) + "mm";
+                // Update Visuals
+                document.getElementById('temp_display').innerText = hourlyData.temp + "°C";
+                document.getElementById('humidity_display').innerText = Math.round(hourlyData.humidity) + "%";
+                document.getElementById('precip_display').innerText = (hourlyData.precip || 0) + "mm";
+
+                // Update HIDDEN Numeric Fields for the model
+                document.getElementById('raw_temp').value = hourlyData.temp;
+                document.getElementById('raw_humidity').value = Math.round(hourlyData.humidity);
+                document.getElementById('raw_precip').value = hourlyData.precip || 0;
 
                 const cond = hourlyData.conditions.toLowerCase();
                 let code = 0; 
                 if (cond.includes('partially cloudy')) code = 2;
                 else if (cond.includes('overcast')) code = 5;
-                else if (cond.includes('rain') && hourlyData.precip < 2) code = 3;
                 else if (cond.includes('rain')) code = 8;
                 else if (cond.includes('clear')) code = 1;
                 
@@ -185,9 +194,6 @@
             btn.disabled = true;
             btn.innerText = "Analyzing...";
             
-            // CLEANING FUNCTION: Remove text/symbols so we only send numbers to the model
-            const clean = (val) => parseFloat(val.toString().replace(/[^0-9.]/g, ''));
-
             const payload = {
                 category: parseInt(document.getElementById('category').value),
                 weather: parseInt(document.getElementById('weather').value),
@@ -197,10 +203,12 @@
                 payday_bin: parseInt(document.getElementById('payday_bin').value),
                 start_hour: parseInt(document.getElementById('start_hour').value),
                 shelf_status: 3,
-                temp: clean(document.getElementById('temp').value),
-                humidity: clean(document.getElementById('humidity').value),
-                precip: clean(document.getElementById('precip').value)
+                temp: parseFloat(document.getElementById('raw_temp').value),
+                humidity: parseInt(document.getElementById('raw_humidity').value),
+                precip: parseFloat(document.getElementById('raw_precip').value)
             };
+
+            console.log("Sending Payload:", payload);
 
             try {
                 const response = await fetch(API_URL, {
@@ -213,12 +221,13 @@
                 resBox.classList.remove('hidden');
 
                 const p = Number(data.prediction);
-                let label, color, action;
+                if (isNaN(p)) throw new Error("Model returned NaN");
 
+                let label, color, action;
                 if (p <= 1) {
-                    label = "Low Demand"; color = "#10b981"; action = "🟢 Quiet Period. Good for inventory counts.";
+                    label = "Low Demand"; color = "#10b981"; action = "🟢 Quiet Period. Good for inventory.";
                 } else if (p <= 3) {
-                    label = "Moderate Traffic"; color = "#f59e0b"; action = "🟡 Steady flow. Normal floor presence needed.";
+                    label = "Moderate Traffic"; color = "#f59e0b"; action = "🟡 Steady flow. Keep floor staff active.";
                 } else {
                     label = "High Demand / RUSH"; color = "#ef4444"; action = "🔴 Peak period! Prioritize checkout speed.";
                 }
@@ -228,9 +237,13 @@
                 document.getElementById('statusLabel').style.color = color;
                 document.getElementById('suggestionText').innerText = action;
                 resBox.scrollIntoView({ behavior: 'smooth' });
-            } catch (err) { alert("API Offline"); }
+            } catch (err) { 
+                console.error(err);
+                alert("Model Error: Ensure your Hugging Face Space is active."); 
+            }
             finally { btn.disabled = false; btn.innerText = "Run Prediction"; }
         };
     </script>
 </body>
-</html>
+    </html>
+    
