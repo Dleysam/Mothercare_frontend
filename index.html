@@ -8,8 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .glass-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        select, input { cursor: pointer; transition: 0.2s; }
-        input:focus { outline: none; border-color: #3b82f6; }
+        .toggle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toggle-active { background-color: #3b82f6 !important; color: white !important; border-color: #60a5fa !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen p-4 flex items-center justify-center font-sans">
@@ -28,7 +28,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Category</label>
-                    <select id="category" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm font-bold appearance-none">
+                    <select id="category" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm font-bold appearance-none outline-none focus:border-blue-500">
                         <option value="Mothercare">Mothercare</option>
                         <option value="Toys">Toys</option>
                         <option value="Back to School">Back to School</option>
@@ -37,37 +37,51 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Detected Weather</label>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Weather Context</label>
                     <div id="weather_display" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm font-bold text-blue-400 capitalize">
-                        Loading...
+                        Syncing...
                     </div>
                 </div>
             </div>
 
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Shelf Status (Stock Level)</label>
+                <div class="flex p-1 bg-slate-900 border border-slate-800 rounded-2xl gap-1">
+                    <button type="button" onclick="setToggle('shelf_status', 1, this)" class="toggle-btn flex-1 py-3 text-[10px] font-black uppercase rounded-xl border border-transparent text-slate-500">Full</button>
+                    <button type="button" onclick="setToggle('shelf_status', 3, this)" class="toggle-btn flex-1 py-3 text-[10px] font-black uppercase rounded-xl border border-transparent text-slate-500 toggle-active">Normal</button>
+                    <button type="button" onclick="setToggle('shelf_status', 5, this)" class="toggle-btn flex-1 py-3 text-[10px] font-black uppercase rounded-xl border border-transparent text-slate-500">Empty</button>
+                </div>
+                <input type="hidden" id="shelf_status" value="3">
+            </div>
+
             <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block text-[9px] text-slate-500 uppercase mb-1 ml-1">Day (1-31)</label>
-                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-center font-bold">
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 ml-1">Payday Period</label>
+                    <div class="flex p-1 bg-slate-900 border border-slate-800 rounded-2xl gap-1">
+                        <button type="button" onclick="setToggle('payday_bin', 0, this)" class="toggle-btn flex-1 py-3 text-[10px] font-black uppercase rounded-xl border border-transparent text-slate-500 toggle-active">Standard Day</button>
+                        <button type="button" onclick="setToggle('payday_bin', 1, this)" class="toggle-btn flex-1 py-3 text-[10px] font-black uppercase rounded-xl border border-transparent text-slate-500">Payday Rush</button>
+                    </div>
+                    <input type="hidden" id="payday_bin" value="0">
                 </div>
                 <div>
-                    <label class="block text-[9px] text-slate-500 uppercase mb-1 ml-1">Month (1-12)</label>
-                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-center font-bold">
-                </div>
-                <div>
-                    <label class="block text-[9px] text-blue-500 uppercase mb-1 ml-1">Hour (0-23)</label>
-                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-2xl p-4 text-center font-bold text-blue-400">
+                    <label class="block text-[10px] font-bold text-blue-500 uppercase mb-2 ml-1 text-center">Hour</label>
+                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-2xl p-3 text-center font-bold text-blue-400">
                 </div>
             </div>
 
-            <div class="p-6 bg-slate-900/50 rounded-[2rem] border border-slate-800 grid grid-cols-3 gap-4 text-center">
-                <div><span class="text-[9px] text-slate-500 uppercase font-black">Temp</span><p id="t_val" class="text-xl font-black">--</p></div>
-                <div class="border-x border-slate-800"><span class="text-[9px] text-slate-500 uppercase font-black">Humid</span><p id="h_val" class="text-xl font-black">--</p></div>
-                <div><span class="text-[9px] text-slate-500 uppercase font-black">Precip</span><p id="p_val" class="text-xl font-black">--</p></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex bg-slate-900/50 rounded-2xl border border-slate-800 p-3 items-center justify-around">
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Temp</span><p id="t_val" class="text-lg font-black">--</p></div>
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Humid</span><p id="h_val" class="text-lg font-black">--</p></div>
+                    <div class="text-center"><span class="text-[8px] text-slate-500 uppercase font-black">Precip</span><p id="p_val" class="text-lg font-black">--</p></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-center text-xs font-bold" placeholder="Day">
+                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-center text-xs font-bold" placeholder="Mo">
+                </div>
             </div>
 
             <input type="hidden" id="day_final" value="1">
-            <input type="hidden" id="shelf_status" value="3">
-            <input type="hidden" id="payday_bin" value="0">
 
             <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-[2rem] shadow-xl uppercase tracking-[0.2em] text-xs transition-all active:scale-95">
                 Run Inference Engine
@@ -84,8 +98,15 @@
     <script>
         const API_URL = "https://dleysam-mothercare-predictor-api.hf.space/predict";
         const WEATHER_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
-
         let metrics = { temp: 28, humidity: 65, precip: 0, conditions: "clear" };
+
+        // Toggle Logic
+        function setToggle(inputId, value, btn) {
+            document.getElementById(inputId).value = value;
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('toggle-active'));
+            btn.classList.add('toggle-active');
+        }
 
         async function updateWeather() {
             const d = document.getElementById('day').value;
@@ -95,37 +116,26 @@
             
             try {
                 const res = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Warri,NG/2026-${m}-${d}?unitGroup=metric&key=${WEATHER_KEY}&contentType=json`);
-                if (!res.ok) throw new Error("API Limit");
-                
                 const data = await res.json();
                 const hrData = data.days[0].hours[h] || data.days[0];
                 
-                // Format condition to match model expectation (clear, rainy, cloudy, overcast)
                 let cond = hrData.conditions.toLowerCase();
                 if (cond.includes('rain')) cond = 'rainy';
                 else if (cond.includes('cloud')) cond = 'cloudy';
                 else if (cond.includes('overcast')) cond = 'overcast';
                 else cond = 'clear';
 
-                metrics = { 
-                    temp: hrData.temp, 
-                    humidity: hrData.humidity, 
-                    precip: hrData.precip || 0,
-                    conditions: cond
-                };
+                metrics = { temp: hrData.temp, humidity: hrData.humidity, precip: hrData.precip || 0, conditions: cond };
 
-                document.getElementById('t_val').innerText = metrics.temp + "°";
+                document.getElementById('t_val').innerText = Math.round(metrics.temp) + "°";
                 document.getElementById('h_val').innerText = Math.round(metrics.humidity) + "%";
-                document.getElementById('p_val').innerText = metrics.precip + "mm";
+                document.getElementById('p_val').innerText = metrics.precip + "m";
                 statusEl.innerText = cond;
-
             } catch (e) { 
                 statusEl.innerText = "Manual Mode";
-                statusEl.classList.replace('text-blue-400', 'text-slate-500');
             }
         }
 
-        // Auto-fill current date/time on load
         window.onload = () => {
             const now = new Date();
             document.getElementById('day').value = now.getDate();
@@ -134,7 +144,6 @@
             updateWeather();
         };
 
-        // Re-fetch weather if inputs change
         [document.getElementById('day'), document.getElementById('month'), document.getElementById('start_hour')].forEach(el => {
             el.addEventListener('change', updateWeather);
         });
@@ -142,8 +151,7 @@
         document.getElementById('predictForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...';
+            btn.disabled = true; btn.innerText = "Analysing...";
 
             const payload = {
                 category: document.getElementById('category').value,
@@ -165,43 +173,29 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                if (!response.ok) throw new Error("Backend Offline");
-
                 const data = await response.json();
                 const prediction = parseFloat(data.prediction);
-                const pRounded = Math.round(prediction);
                 
-                const resBox = document.getElementById('resultBox');
-                const pVal = document.getElementById('predictionValue');
+                document.getElementById('resultBox').classList.remove('hidden');
+                document.getElementById('predictionValue').innerText = prediction.toFixed(1);
+
                 const sLab = document.getElementById('statusLabel');
                 const sTex = document.getElementById('suggestionText');
 
-                resBox.classList.remove('hidden');
-                pVal.innerText = prediction.toFixed(1);
-
                 if (prediction <= 1.5) {
-                    sLab.innerText = "Low Demand";
-                    sLab.style.color = "#10b981";
-                    sTex.innerText = "Good time for inventory checks and shelf tidying.";
+                    sLab.innerText = "Low Demand"; sLab.style.color = "#10b981";
+                    sTex.innerText = "Good time for inventory and organizing.";
                 } else if (prediction <= 3.5) {
-                    sLab.innerText = "Moderate Demand";
-                    sLab.style.color = "#f59e0b";
-                    sTex.innerText = "Expect steady customers. Keep sections organized.";
+                    sLab.innerText = "Moderate Demand"; sLab.style.color = "#f59e0b";
+                    sTex.innerText = "Steady flow expected. Keep shelves tidy.";
                 } else {
-                    sLab.innerText = "High Demand / Rush!";
-                    sLab.style.color = "#ef4444";
-                    sTex.innerText = "Peak period! Ensure all hands are on deck for quick service.";
+                    sLab.innerText = "High Demand / Rush!"; sLab.style.color = "#ef4444";
+                    sTex.innerText = "Peak period! Speed up service and restocking.";
                 }
-                
-                resBox.scrollIntoView({ behavior: 'smooth' });
-
             } catch (err) {
-                alert("Connection Error: Please ensure your Hugging Face space is active.");
-                console.error(err);
+                alert("Check API connection.");
             } finally {
-                btn.disabled = false; 
-                btn.innerText = "Run Inference Engine";
+                btn.disabled = false; btn.innerText = "Run Inference Engine";
             }
         };
     </script>
