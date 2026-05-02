@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GABBS Mothercare AI | Real Time Demand Forecast</title>
+    <title>GABBS AI | Professional Forecast</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        select, input { transition: all 0.2s ease-in-out; cursor: pointer; }
+        .glass-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        select, input { transition: all 0.2s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen p-4 flex items-center justify-center font-sans">
 
-    <div class="max-w-xl w-full glass-card rounded-[2rem] shadow-2xl p-6 md:p-10">
+    <div class="max-w-xl w-full glass-card rounded-[2.5rem] shadow-2xl p-8 md:p-10 border border-slate-800">
         
         <div class="text-center mb-8">
-            <div class="flex justify-center mb-4">
-                <img src="https://raw.githubusercontent.com/dleysam/mothercare_frontend/main/gabbs.png" alt="GABBS" class="h-10 object-contain">
-            </div>
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Mothercare Predictor</h1>
-            <p id="sync-status" class="text-slate-500 text-[9px] uppercase tracking-widest font-bold mt-1">Ready for Sync</p>
+            <h1 class="text-2xl font-black bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent italic">GABBS PREDICTOR</h1>
+            <p id="sync-status" class="text-blue-500 text-[9px] uppercase tracking-[0.3em] font-bold mt-2">📡 Weather Engine Linked</p>
         </div>
 
-        <form id="predictForm" class="space-y-5">
+        <form id="predictForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Category</label>
-                    <select id="category" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none text-sm">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Store Category</label>
+                    <select id="category" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 outline-none text-sm font-semibold">
                         <option value="0">Back to School</option>
                         <option value="1">General/Other</option>
                         <option value="2">Mothercare</option>
@@ -36,17 +33,15 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2 ml-1">Weather (Hourly Sync)</label>
-                    <select id="weather" class="w-full bg-slate-900/50 border border-blue-500/30 rounded-xl p-3 outline-none text-sm pointer-events-none">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Weather Class</label>
+                    <select id="weather" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 outline-none text-sm pointer-events-none opacity-80">
                         <option value="0">Clear</option>
                         <option value="1">Clear/Sunny</option>
                         <option value="2">Cloudy</option>
                         <option value="3">Light Rain</option>
                         <option value="4">Normal/Cool</option>
                         <option value="5">Overcast</option>
-                        <option value="6">Rain</option>
                         <option value="8">Rainy</option>
-                        <option value="9">Rainy/Cloudy</option>
                     </select>
                 </div>
             </div>
@@ -54,146 +49,117 @@
             <div class="grid grid-cols-3 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Date</label>
-                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                    <input type="number" id="day" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-center font-bold">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Month</label>
-                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
+                    <input type="number" id="month" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-center font-bold">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2">Hour (0-23)</label>
-                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-xl p-3 text-center text-sm font-bold">
+                    <label class="block text-[10px] font-bold uppercase text-blue-500 mb-2">Hour</label>
+                    <input type="number" id="start_hour" class="w-full bg-blue-900/20 border border-blue-500/50 rounded-2xl p-4 text-center font-bold text-blue-400">
+                </div>
+            </div>
+
+            <div class="p-5 bg-slate-900/50 rounded-[2rem] border border-slate-800 grid grid-cols-3 gap-4 text-center">
+                <div>
+                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Temp</p>
+                    <p id="view_temp" class="text-lg font-black">--</p>
+                </div>
+                <div class="border-x border-slate-800">
+                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Humidity</p>
+                    <p id="view_humid" class="text-lg font-black">--</p>
+                </div>
+                <div>
+                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Precip</p>
+                    <p id="view_precip" class="text-lg font-black">--</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Day of Week</label>
-                    <select id="day_final" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none">
-                        <option value="1">Monday</option>
-                        <option value="5">Tuesday</option>
-                        <option value="6">Wednesday</option>
-                        <option value="4">Thursday</option>
-                        <option value="0">Friday</option>
-                        <option value="2">Saturday</option>
-                        <option value="3">Sunday</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Is Payday?</label>
-                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
-                        <option value="0">No (0)</option>
-                        <option value="1">Yes (1)</option>
+                <select id="day_final" class="hidden"><option value="1"></option></select> <div class="col-span-2">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Is Payday Week?</label>
+                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm font-bold">
+                        <option value="0">Regular Day (0)</option>
+                        <option value="1">Payday Active (1)</option>
                     </select>
                 </div>
             </div>
 
-            <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-3 tracking-widest text-center">Hourly Atmosphere Data</p>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="text-center">
-                        <span class="block text-[10px] text-slate-500 mb-1">Temp</span>
-                        <div id="temp_display" class="text-xl font-bold text-white">--</div>
-                    </div>
-                    <div class="text-center border-x border-slate-800">
-                        <span class="block text-[10px] text-slate-500 mb-1">Humidity</span>
-                        <div id="humidity_display" class="text-xl font-bold text-white">--</div>
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-[10px] text-slate-500 mb-1">Precip</span>
-                        <div id="precip_display" class="text-xl font-bold text-white">--</div>
-                    </div>
-                </div>
-            </div>
-
-            <input type="hidden" id="raw_temp" value="28.0">
-            <input type="hidden" id="raw_humidity" value="70">
-            <input type="hidden" id="raw_precip" value="0.0">
-
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">
-                Run Prediction
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-black py-5 rounded-[2rem] shadow-xl shadow-blue-900/20 transition-all uppercase tracking-widest text-xs">
+                Run Inference Engine
             </button>
         </form>
 
-        <div id="resultBox" class="hidden mt-8 p-6 bg-slate-900 border border-slate-800 rounded-[1.5rem] text-center">
-            <p id="statusLabel" class="text-[10px] font-bold uppercase tracking-widest mb-1"></p>
-            <h2 id="predictionValue" class="text-6xl font-black text-white">--</h2>
-            <p id="suggestionText" class="text-slate-300 text-xs mt-4 px-4 font-medium leading-relaxed"></p>
+        <div id="resultBox" class="hidden mt-8 p-8 bg-slate-900 rounded-[2.5rem] border border-slate-800 text-center">
+            <p id="statusLabel" class="text-[10px] font-bold uppercase tracking-[0.2em] mb-2"></p>
+            <h2 id="predictionValue" class="text-7xl font-black text-white leading-none">0</h2>
+            <p id="suggestionText" class="text-slate-400 text-[11px] mt-6 font-medium leading-relaxed uppercase tracking-tighter"></p>
         </div>
     </div>
 
     <script>
         const API_URL = "https://dleysam-mothercare-predictor-api.hf.space/predict";
-        const WEATHER_API_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
+        const WEATHER_KEY = "Q4G4KAQFFW5RMB9VCTFKZGXP9";
         const CITY = "Warri,NG";
+
+        // Global state to store raw numeric weather data
+        let rawWeather = { temp: 28.5, humidity: 65, precip: 0.0 };
 
         window.onload = () => {
             const now = new Date();
             document.getElementById('day').value = now.getDate();
             document.getElementById('month').value = now.getMonth() + 1;
             document.getElementById('start_hour').value = now.getHours();
-            updateDayCode();
-            fetchHourlyWeather();
+            fetchWeather();
         };
 
-        function updateDayCode() {
-            const d = parseInt(document.getElementById('day').value);
-            const m = parseInt(document.getElementById('month').value) - 1;
-            const y = new Date().getFullYear();
-            const dateObj = new Date(y, m, d);
-            const dayMap = { 0: 3, 1: 1, 2: 5, 3: 6, 4: 4, 5: 0, 6: 2 };
-            document.getElementById('day_final').value = dayMap[dateObj.getDay()];
-        }
-
-        async function fetchHourlyWeather() {
+        async function fetchWeather() {
             const d = document.getElementById('day').value.padStart(2, '0');
             const m = document.getElementById('month').value.padStart(2, '0');
             const h = parseInt(document.getElementById('start_hour').value);
-            const y = new Date().getFullYear();
             const status = document.getElementById('sync-status');
             
-            status.innerText = "🔄 SYNCING...";
-            const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/${y}-${m}-${d}?unitGroup=metric&key=${WEATHER_API_KEY}&contentType=json`;
-
+            status.innerText = "⏳ Syncing Forecast...";
             try {
-                const res = await fetch(url);
+                const res = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${CITY}/${new Date().getFullYear()}-${m}-${d}?unitGroup=metric&key=${WEATHER_KEY}&contentType=json`);
                 const data = await res.json();
-                const hourlyData = data.days[0].hours[h];
+                const hour = data.days[0].hours[h];
 
-                // Update Visuals
-                document.getElementById('temp_display').innerText = hourlyData.temp + "°C";
-                document.getElementById('humidity_display').innerText = Math.round(hourlyData.humidity) + "%";
-                document.getElementById('precip_display').innerText = (hourlyData.precip || 0) + "mm";
+                // Update Raw Data (Pure numbers for model)
+                rawWeather = { temp: hour.temp, humidity: Math.round(hour.humidity), precip: hour.precip || 0 };
 
-                // Update HIDDEN Numeric Fields for the model
-                document.getElementById('raw_temp').value = hourlyData.temp;
-                document.getElementById('raw_humidity').value = Math.round(hourlyData.humidity);
-                document.getElementById('raw_precip').value = hourlyData.precip || 0;
+                // Update View (Symbols for user)
+                document.getElementById('view_temp').innerText = rawWeather.temp + "°";
+                document.getElementById('view_humid').innerText = rawWeather.humidity + "%";
+                document.getElementById('view_precip').innerText = rawWeather.precip + "mm";
 
-                const cond = hourlyData.conditions.toLowerCase();
-                let code = 0; 
-                if (cond.includes('partially cloudy')) code = 2;
+                // Auto-map Weather Class
+                const cond = hour.conditions.toLowerCase();
+                let code = 4; // Default Normal
+                if (cond.includes('clear')) code = 1;
+                else if (cond.includes('cloud')) code = 2;
                 else if (cond.includes('overcast')) code = 5;
                 else if (cond.includes('rain')) code = 8;
-                else if (cond.includes('clear')) code = 1;
-                
                 document.getElementById('weather').value = code;
-                status.innerText = `✅ Forecast for ${h}:00 synced`;
-            } catch (e) { 
-                status.innerText = "❌ Sync Failed";
-            }
+
+                // Auto-map Day Code
+                const dayMap = { 0: 3, 1: 1, 2: 5, 3: 6, 4: 4, 5: 0, 6: 2 };
+                document.getElementById('day_final').value = dayMap[new Date(2026, m-1, d).getDay()];
+
+                status.innerText = "✅ Metrics Synchronized";
+            } catch (e) { status.innerText = "⚠️ Offline Mode Active"; }
         }
 
-        document.getElementById('day').addEventListener('input', () => { updateDayCode(); fetchHourlyWeather(); });
-        document.getElementById('month').addEventListener('input', () => { updateDayCode(); fetchHourlyWeather(); });
-        document.getElementById('start_hour').addEventListener('input', fetchHourlyWeather);
+        document.getElementById('start_hour').oninput = fetchWeather;
+        document.getElementById('day').oninput = fetchWeather;
 
         document.getElementById('predictForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.innerText = "Analyzing...";
-            
+            btn.innerText = "Processing Logic...";
+
             const payload = {
                 category: parseInt(document.getElementById('category').value),
                 weather: parseInt(document.getElementById('weather').value),
@@ -203,12 +169,10 @@
                 payday_bin: parseInt(document.getElementById('payday_bin').value),
                 start_hour: parseInt(document.getElementById('start_hour').value),
                 shelf_status: 3,
-                temp: parseFloat(document.getElementById('raw_temp').value),
-                humidity: parseInt(document.getElementById('raw_humidity').value),
-                precip: parseFloat(document.getElementById('raw_precip').value)
+                temp: rawWeather.temp,
+                humidity: rawWeather.humidity,
+                precip: rawWeather.precip
             };
-
-            console.log("Sending Payload:", payload);
 
             try {
                 const response = await fetch(API_URL, {
@@ -217,33 +181,24 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
+                
+                const p = Number(data.prediction);
                 const resBox = document.getElementById('resultBox');
                 resBox.classList.remove('hidden');
 
-                const p = Number(data.prediction);
-                if (isNaN(p)) throw new Error("Model returned NaN");
-
-                let label, color, action;
-                if (p <= 1) {
-                    label = "Low Demand"; color = "#10b981"; action = "🟢 Quiet Period. Good for inventory.";
-                } else if (p <= 3) {
-                    label = "Moderate Traffic"; color = "#f59e0b"; action = "🟡 Steady flow. Keep floor staff active.";
-                } else {
-                    label = "High Demand / RUSH"; color = "#ef4444"; action = "🔴 Peak period! Prioritize checkout speed.";
-                }
+                let label = "Low Demand", color = "#10b981", action = "🟢 Optimal for maintenance and restocking.";
+                if (p >= 4) { label = "High Demand / RUSH"; color = "#ef4444"; action = "🔴 Peak period! Speed up checkouts and clear aisles."; }
+                else if (p >= 2) { label = "Moderate Traffic"; color = "#f59e0b"; action = "🟡 Steady flow. Monitor Mothercare section."; }
 
                 document.getElementById('predictionValue').innerText = p;
                 document.getElementById('statusLabel').innerText = label;
                 document.getElementById('statusLabel').style.color = color;
                 document.getElementById('suggestionText').innerText = action;
                 resBox.scrollIntoView({ behavior: 'smooth' });
-            } catch (err) { 
-                console.error(err);
-                alert("Model Error: Ensure your Hugging Face Space is active."); 
-            }
-            finally { btn.disabled = false; btn.innerText = "Run Prediction"; }
+
+            } catch (err) { alert("Space Error: Check your Hugging Face API Status."); }
+            finally { btn.disabled = false; btn.innerText = "Run Inference Engine"; }
         };
     </script>
 </body>
-    </html>
-    
+</html>
