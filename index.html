@@ -18,7 +18,7 @@
         
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
-                <img src="gabbs.png" alt="GABBS" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block'" class="h-10 object-contain">
+                <img src="https://raw.githubusercontent.com/dleysam/mothercare-api/main/gabbs.png" alt="GABBS" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block'" class="h-10 object-contain">
                 <span id="logo-text" class="hidden text-2xl font-black tracking-tighter text-white">GABBS</span>
             </div>
             <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Mothercare Predictor</h1>
@@ -26,11 +26,10 @@
         </div>
 
         <form id="predictForm" class="space-y-5">
-            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Category</label>
-                    <select id="category" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none">
+                    <select id="category" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none text-sm">
                         <option value="Wears/Shoes">Wears/Shoes</option>
                         <option value="Toys">Toys</option>
                         <option value="Back to School">Back to School</option>
@@ -40,7 +39,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Weather</label>
-                    <select id="weather" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none">
+                    <select id="weather" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none text-sm">
                         <option value="clear">Clear</option>
                         <option value="cloudy">Cloudy</option>
                         <option value="rainy">Rainy</option>
@@ -51,7 +50,7 @@
 
             <div>
                 <label class="block text-[10px] font-bold uppercase text-blue-500 mb-2 ml-1">Shelf Status (Current Stock)</label>
-                <select id="shelf_status" class="w-full bg-slate-900/50 border border-blue-900/30 rounded-xl p-3 outline-none">
+                <select id="shelf_status" class="w-full bg-slate-900/50 border border-blue-900/30 rounded-xl p-3 outline-none text-sm">
                     <option value="3">Normal (3)</option>
                     <option value="1">Overstocked (1)</option>
                     <option value="5">Empty (5)</option>
@@ -61,34 +60,34 @@
             <div class="grid grid-cols-3 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Day (0-6)</label>
-                    <input type="number" id="day_final" value="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center">
+                    <input type="number" id="day_final" value="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Date (1-31)</label>
-                    <input type="number" id="day" value="29" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center">
+                    <input type="number" id="day" value="29" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Month (1-12)</label>
-                    <input type="number" id="month" value="5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center">
+                    <input type="number" id="month" value="5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-sm">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Is Payday?</label>
-                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                    <select id="payday_bin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
                         <option value="1">Yes (1)</option>
                         <option value="0">No (0)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 ml-1">Hour (0-23)</label>
-                    <input type="number" id="start_hour" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                    <input type="number" id="start_hour" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
                 </div>
             </div>
 
             <details class="group">
-                <summary class="text-[10px] font-bold uppercase text-slate-600 cursor-pointer hover:text-slate-400 transition ml-1">Environmental Data (Defaults)</summary>
+                <summary class="text-[10px] font-bold uppercase text-slate-600 cursor-pointer hover:text-slate-400 transition ml-1">Environmental Data</summary>
                 <div class="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-slate-800">
                     <div>
                         <label class="block text-[9px] text-slate-500 mb-1">Temp °C</label>
@@ -110,22 +109,48 @@
             </button>
         </form>
 
-        <div id="resultBox" class="hidden animate-pulse mt-8 p-6 bg-blue-600/10 border border-blue-500/30 rounded-[1.5rem] text-center">
-            <p class="text-blue-400 text-[10px] font-bold uppercase tracking-widest">Predicted Volume</p>
-            <h2 id="predictionValue" class="text-6xl font-black text-white mt-1">0</h2>
-            <p class="text-slate-500 text-[10px] mt-2 italic">Based on 11-feature analysis</p>
+        <div id="resultBox" class="hidden mt-8 p-6 bg-slate-900 border border-slate-800 rounded-[1.5rem] text-center">
+            <p id="statusLabel" class="text-[10px] font-bold uppercase tracking-widest mb-1"></p>
+            <h2 id="predictionValue" class="text-6xl font-black text-white">0</h2>
+            <p id="suggestionText" class="text-slate-300 text-xs mt-4 px-4 font-medium leading-relaxed"></p>
+            <p class="text-slate-600 text-[9px] mt-6 italic border-t border-slate-800 pt-3">Smart Insights for GABBS Operations</p>
         </div>
     </div>
 
     <script>
         const form = document.getElementById('predictForm');
-        // UPDATE WITH YOUR HUGGING FACE URL
         const API_URL = "https://dleysam-mothercare-predictor-api.hf.space/predict";
+
+        // Logic to translate numbers into readable advice
+        function getFeedback(volume) {
+            if (volume <= 1) {
+                return {
+                    label: "Low Demand Expected",
+                    color: "#10b981", // Green
+                    action: "🟢 Good time for inventory checks, shelf tidying, and organizing the warehouse."
+                };
+            } else if (volume <= 3) {
+                return {
+                    label: "Moderate Traffic",
+                    color: "#f59e0b", // Amber
+                    action: "🟡 Expect steady customers. Ensure nursing mother assistants are visible on the floor."
+                };
+            } else {
+                return {
+                    label: "High Demand / RUSH",
+                    color: "#ef4444", // Red
+                    action: "🔴 Peak period predicted! Prioritize checkout speed and keep aisle traffic clear."
+                };
+            }
+        }
 
         form.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const resBox = document.getElementById('resultBox');
+            
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
             
             const payload = {
                 category: document.getElementById('category').value,
@@ -135,7 +160,7 @@
                 month: parseInt(document.getElementById('month').value),
                 payday_bin: parseInt(document.getElementById('payday_bin').value),
                 start_hour: parseInt(document.getElementById('start_hour').value),
-                shelf_status: parseInt(document.getElementById('shelf_status').value), // 1, 3, or 5
+                shelf_status: parseInt(document.getElementById('shelf_status').value),
                 temp: parseFloat(document.getElementById('temp').value),
                 humidity: parseInt(document.getElementById('humidity').value),
                 precip: parseFloat(document.getElementById('precip').value)
@@ -147,47 +172,30 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
                 });
+                
                 const data = await response.json();
-                const resBox = document.getElementById('resultBox');
-                resBox.classList.remove('hidden', 'animate-pulse');
+                
+                // Apply the feedback logic
+                const feedback = getFeedback(data.prediction);
+                
+                resBox.classList.remove('hidden');
                 document.getElementById('predictionValue').innerText = data.prediction;
+                
+                const label = document.getElementById('statusLabel');
+                label.innerText = feedback.label;
+                label.style.color = feedback.color;
+                
+                document.getElementById('suggestionText').innerText = feedback.action;
+                
                 resBox.scrollIntoView({ behavior: 'smooth' });
+
             } catch (error) {
-                alert("Backend Offline: Check your Hugging Face space.");
+                alert("Connection Error: Make sure your Hugging Face Space is 'Running'.");
             } finally {
                 btn.innerHTML = 'Run Inference';
+                btn.disabled = false;
             }
         };
-        // This function determines the description based on the number
-function getFeedback(volume) {
-    if (volume <= 1) {
-        return {
-            label: "Low Demand",
-            color: "#10b981", // Green
-            action: "Good time for inventory checks and shelf tidying."
-        };
-    } else if (volume <= 3) {
-        return {
-            label: "Moderate Demand",
-            color: "#f59e0b", // Amber
-            action: "Expect steady customers. Keep the nursing section organized."
-        };
-    } else {
-        return {
-            label: "High Demand / Rush!",
-            color: "#ef4444", // Red
-            action: "Peak period! Ensure all hands are on deck for quick service."
-        };
-    }
-}
-
-// Inside your .then(data => { ... }) block:
-const feedback = getFeedback(data.prediction);
-resultValue.innerText = data.prediction; // Keeps the number
-statusLabel.innerText = feedback.label;   // Adds "Rush" or "Quiet"
-statusLabel.style.color = feedback.color;
-suggestionText.innerText = feedback.action; // Adds the "What to do"
     </script>
 </body>
-              </html>
-              
+</html>
